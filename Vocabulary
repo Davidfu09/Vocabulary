@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #4a90e2;
+    }
+    .question-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      background-color: #4a90e2;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #357ab9;
+    }
+    .score {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vocabulary Quiz Game</h1>
+  <div class="question-container">
+    <p id="question"></p>
+    <button onclick="answer(true)">True</button>
+    <button onclick="answer(false)">False</button>
+  </div>
+  <div class="score">
+    <p id="score">Score: 0</p>
+  </div>
+
+  <script>
+    const words = [
+      { word: "expendable", definition: "Able to be sacrificed or replaced without loss" },
+      { word: "subliminal", definition: "Below the threshold of conscious perception" },
+      { word: "stagnate", definition: "To stop developing, progressing, or advancing" },
+      { word: "primeval", definition: "Relating to the earliest ages of history" },
+      { word: "blaze", definition: "A very large or intensely burning fire" },
+      { word: "sagacity", definition: "Keen perception and sound judgment" },
+      { word: "vehemently", definition: "With strong, intense emotion or passion" },
+      { word: "conceive", definition: "To form or create an idea in the mind" },
+      { word: "fancy", definition: "To have a liking or inclination toward something" },
+      { word: "vex", definition: "To annoy, frustrate, or worry someone" },
+      { word: "perplex", definition: "To confuse or puzzle" },
+      { word: "traverse", definition: "To travel across or through something" },
+      { word: "expound", definition: "To explain or interpret in detail" },
+      { word: "tumultuous", definition: "Full of chaos, disorder, and uproar" },
+      { word: "profound", definition: "Very deep, intense, or thought-provoking" },
+      { word: "lament", definition: "To express sorrow or regret" },
+      { word: "obscure", definition: "Not well known or easily understood" },
+      { word: "serene", definition: "Calm, peaceful, and untroubled" },
+      { word: "immense", definition: "Extremely large or great" },
+      { word: "harbinger", definition: "A person or thing that announces an upcoming event" }
+    ];
+
+    let score = 0;
+    let currentWordIndex = 0;
+
+    function loadQuestion() {
+      const currentWord = words[currentWordIndex];
+      const correct = Math.random() > 0.5;
+      document.getElementById("question").innerText = 
+        correct 
+          ? `Does "${currentWord.word}" mean: "${currentWord.definition}"?` 
+          : `Does "${currentWord.word}" mean: "${words[(currentWordIndex + 1) % words.length].definition}"?`;
+      document.getElementById("question").dataset.correct = correct;
+    }
+
+    function answer(isCorrect) {
+      const correct = document.getElementById("question").dataset.correct === 'true';
+      if (isCorrect === correct) {
+        score++;
+      } else {
+        score--;
+      }
+      document.getElementById("score").innerText = `Score: ${score}`;
+      currentWordIndex = (currentWordIndex + 1) % words.length;
+      loadQuestion();
+    }
+
+    window.onload = loadQuestion;
+  </script>
+</body>
+</html>
