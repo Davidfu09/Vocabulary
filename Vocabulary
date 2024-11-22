@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vocabulary Quiz Game</title>
+  <title>Fun Vocabulary Quiz Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
+      background-color: #f0f8ff;
       color: #333;
       display: flex;
       flex-direction: column;
@@ -42,21 +42,23 @@
     button:hover {
       background-color: #357ab9;
     }
-    .score {
+    .score, .timer, .level {
       margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>Vocabulary Quiz Game</h1>
+  <h1>Fun Vocabulary Quiz Game</h1>
   <div class="question-container">
     <p id="question"></p>
     <button onclick="answer(true)">True</button>
     <button onclick="answer(false)">False</button>
   </div>
-  <div class="score">
-    <p id="score">Score: 0</p>
-  </div>
+  <div class="score">Score: <span id="score">0</span></div>
+  <div class="timer">Time left: <span id="timeLeft">60</span>s</div>
+  <div class="level">Level: <span id="level">1</span></div>
 
   <script>
     const words = [
@@ -79,19 +81,27 @@
       { word: "obscure", definition: "Not well known or easily understood" },
       { word: "serene", definition: "Calm, peaceful, and untroubled" },
       { word: "immense", definition: "Extremely large or great" },
-      { word: "harbinger", definition: "A person or thing that announces an upcoming event" }
+      { word: "harbinger", definition: "A person or thing that announces an upcoming event" },
+      { word: "arduous", definition: "Requiring a lot of effort and hard work" },
+      { word: "elated", definition: "Extremely happy and excited" },
+      { word: "intricate", definition: "Very detailed and complex" },
+      { word: "melancholy", definition: "A feeling of deep sadness" },
+      { word: "jubilant", definition: "Feeling or expressing great joy" }
     ];
 
     let score = 0;
-    let currentWordIndex = 0;
+    let currentLevel = 1;
+    let timeLeft = 60;
+    let timer;
 
     function loadQuestion() {
-      const currentWord = words[currentWordIndex];
+      const randomIndex = Math.floor(Math.random() * words.length);
+      const currentWord = words[randomIndex];
       const correct = Math.random() > 0.5;
       document.getElementById("question").innerText = 
         correct 
           ? `Does "${currentWord.word}" mean: "${currentWord.definition}"?` 
-          : `Does "${currentWord.word}" mean: "${words[(currentWordIndex + 1) % words.length].definition}"?`;
+          : `Does "${currentWord.word}" mean: "${words[(randomIndex + 1) % words.length].definition}"?`;
       document.getElementById("question").dataset.correct = correct;
     }
 
@@ -99,15 +109,45 @@
       const correct = document.getElementById("question").dataset.correct === 'true';
       if (isCorrect === correct) {
         score++;
+        if (score % 5 === 0) {
+          currentLevel++;
+          document.getElementById("level").innerText = currentLevel;
+          timeLeft += 10; // Bonus time for leveling up!
+        }
       } else {
-        score--;
+        score = Math.max(0, score - 1); // Avoid negative scores
       }
-      document.getElementById("score").innerText = `Score: ${score}`;
-      currentWordIndex = (currentWordIndex + 1) % words.length;
+      document.getElementById("score").innerText = score;
       loadQuestion();
     }
 
-    window.onload = loadQuestion;
+    function startTimer() {
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timeLeft").innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          alert(`Time's up! Your final score is ${score} at Level ${currentLevel}.`);
+          resetGame();
+        }
+      }, 1000);
+    }
+
+    function resetGame() {
+      score = 0;
+      currentLevel = 1;
+      timeLeft = 60;
+      document.getElementById("score").innerText = score;
+      document.getElementById("level").innerText = currentLevel;
+      document.getElementById("timeLeft").innerText = timeLeft;
+      loadQuestion();
+      startTimer();
+    }
+
+    window.onload = () => {
+      loadQuestion();
+      startTimer();
+    };
   </script>
 </body>
 </html>
